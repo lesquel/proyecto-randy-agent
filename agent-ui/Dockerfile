@@ -1,12 +1,13 @@
-# Etapa 1: Build
+# Etapa 1: Construcción
 FROM node:20-alpine AS builder
 
+# Crea directorio de trabajo
 WORKDIR /app
 
 # Instala pnpm globalmente
 RUN npm install -g pnpm
 
-# Copia package.json y lockfile para instalar dependencias
+# Copia archivos necesarios para instalar dependencias
 COPY package.json pnpm-lock.yaml ./
 
 # Instala dependencias
@@ -15,38 +16,24 @@ RUN pnpm install
 # Copia el resto del código fuente
 COPY . .
 
-# Construye la app Next.js
+# Genera la build de producción
 RUN pnpm run build
 
-# Etapa 2: Runner (producción)
+# Etapa 2: Imagen final para producción
 FROM node:20-alpine AS runner
 
+# Crea directorio de trabajo
 WORKDIR /app
 
-# Instala pnpm globalmente
-RUN npm install -g pnpm
-
-# Copia la carpeta .next de la build (generada)
-COPY --from=builder /app/.next ./.next
-
-# Copia package.json y lockfile para instalar solo dependencias de producción
-COPY package.json pnpm-lock.yaml ./
-
-# Instala solo dependencias de producción
-RUN pnpm install --prod
-
-# Copia la carpeta public si existe
-# Si la carpeta no existe, no la copies (para evitar errores)
-# Esto depende de que exista en tu contexto de build
-# Así que asegúrate de que no esté en .dockerignore si la necesitas
+# Copia solo los archivos necesarios para producción
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/next.config.js ./next.config.js
 
-# Copia archivos de configuración necesarios
-COPY --from=builder /app/next.config.js ./ || true
-COPY --from=builder /app/tsconfig.json ./ || true
-
-# Expone el puerto en que corre Next.js (por defecto 3000)
+# Render usará este puerto
 EXPOSE 3000
 
-# Comando para iniciar la app
-CMD ["pnpm", "start"]
+# Comando de arranque
+CMD ["node_modules/.bin/next", "start"]
