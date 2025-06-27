@@ -19,7 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import NewChatButton from './NewChatButton'
 import IconLogo from '../../../assets/bot.png'
 
-const ENDPOINT_PLACEHOLDER = 'NO ENDPOINT ADDED'
+const ENDPOINT_PLACEHOLDER = "https://proyecto-randy-agent.onrender.com"
 
 const SidebarHeader = () => (
   <div className="flex items-center gap-3 p-1">
