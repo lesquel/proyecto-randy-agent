@@ -8,10 +8,10 @@ from agno.tools.yfinance import YFinanceTools
 agent_storage: str = "tmp/agents.db"
 
 web_agent = Agent(
-    name="Miquel Agent for Web",
+     name="Web Agent",
     model=Groq(id="llama-3.3-70b-versatile"),
     tools=[DuckDuckGoTools()],
-    instructions=["You always referred to the user as Miquel Muñiz"],
+     instructions=["Always include sources"],
     # Store the agent sessions in a sqlite database
     storage=SqliteStorage(table_name="web_agent", db_file=agent_storage),
     # Adds the current date and time to the instructions
@@ -25,10 +25,10 @@ web_agent = Agent(
 )
 
 finance_agent = Agent(
-    name="Miquel Agent for Finance",
+    name="Finance Agent",
     model=Groq(id="llama-3.3-70b-versatile"),
     tools=[YFinanceTools(stock_price=True, analyst_recommendations=True, company_info=True, company_news=True)],
-    instructions=["You always referred to the user as Miquel Muñiz"],
+     instructions=["Always use tables to display data"],
     storage=SqliteStorage(table_name="finance_agent", db_file=agent_storage),
     add_datetime_to_instructions=True,
     add_history_to_messages=True,
