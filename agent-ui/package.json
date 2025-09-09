@@ -5,6 +5,10 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
+    "build:static": "next build",
+    "build:pwa": "next build",
+    "build:mobile": "next build && npx cap sync android",
+    "open:android": "npx cap open android",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -14,6 +18,8 @@
     "validate": "pnpm run lint && pnpm run format && pnpm run typecheck"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
     "@radix-ui/react-dialog": "^1.1.5",
     "@radix-ui/react-icons": "^1.3.2",
     "@radix-ui/react-select": "^2.1.5",
@@ -41,6 +47,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7.4.3",
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -51,5 +58,10 @@
     "prettier": "3.4.2",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "capacitor": {
+    "appId": "com.proyecto.randyagent",
+    "appName": "Chat AI+",
+    "webDir": "out"
   }
 }
