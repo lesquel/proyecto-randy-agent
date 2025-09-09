@@ -39,7 +39,13 @@ RUN rm -f /etc/nginx/conf.d/default.conf \
 	&& addgroup -g 1010 appgrp || true \
 	&& adduser -D -G appgrp -u 1010 appusr || true
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-RUN chown -R appusr:appgrp /usr/share/nginx/html
+COPY nginx.main.conf /etc/nginx/nginx.conf
+# Ajuste de permisos para ejecutar nginx como usuario no root (appusr)
+# Nginx necesita escribir en /var/cache/nginx (usamos ahí el pid), /var/run y logs.
+RUN mkdir -p /var/cache/nginx /var/run /var/log/nginx \
+	&& touch /var/cache/nginx/nginx.pid \
+	&& chown -R appusr:appgrp /usr/share/nginx/html /var/cache/nginx /var/run /var/log/nginx \
+	&& chmod -R 755 /var/cache/nginx /var/run /var/log/nginx
 
 # Puerto (coincidimos con 3000 para compatibilidad con hosting que espera 3000)
 EXPOSE 3000
