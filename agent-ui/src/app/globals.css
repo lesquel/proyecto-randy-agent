@@ -4,12 +4,53 @@
 
 @layer base {
   :root {
-    --color-border-default: 255, 255, 255, 0.2;
-    --scrollbar-width: 0.1rem;
+    /* Base semantic palette (light) */
+    --background: 250 15% 98%;
+    --foreground: 240 10% 10%;
+    --muted: 240 6% 92%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 250 90% 55%;
+    --accent-foreground: 0 0% 100%;
+    --primary: 260 100% 56%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --border: 240 6% 88%;
+    --input: 240 6% 88%;
+    --ring: 260 100% 56%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --radius: 0.6rem;
+    --color-border-default: 0, 0, 0, 0.14;
+    --scrollbar-width: 0.55rem;
   }
-
+  .dark {
+    --background: 240 6% 8%;
+    --foreground: 0 0% 100%;
+    --muted: 240 5% 17%;
+    --muted-foreground: 240 4% 70%;
+    --accent: 270 95% 65%;
+    --accent-foreground: 0 0% 100%;
+    --primary: 280 100% 66%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 16%;
+    --secondary-foreground: 0 0% 100%;
+    --border: 240 5% 26%;
+    --input: 240 5% 26%;
+    --ring: 280 100% 66%;
+    --destructive: 0 75% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --color-border-default: 255, 255, 255, 0.18;
+  }
+  * {
+    @apply border-border;
+  }
   body {
-    @apply bg-background/80 text-secondary;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 }
 

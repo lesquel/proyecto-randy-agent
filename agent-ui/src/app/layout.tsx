@@ -4,6 +4,8 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 import SWRegister from '@/components/pwa/SWRegister'
+import Navbar from '@/components/ui/Navbar'
+import ThemeProvider from '../components/ui/ThemeProvider'
 const geistSans = Geist({
   variable: '--font-geist-sans',
   weight: '400',
@@ -28,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0d0d0d" />
@@ -39,9 +41,12 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${dmMono.variable} antialiased`}>
-        <NuqsAdapter>{children}</NuqsAdapter>
-        <Toaster />
-        <SWRegister />
+        <ThemeProvider>
+          <Navbar />
+          <NuqsAdapter>{children}</NuqsAdapter>
+          <Toaster />
+          <SWRegister />
+        </ThemeProvider>
       </body>
     </html>
   )
