@@ -1,38 +1,46 @@
-# Etapa 1: Construcción
+###############################
+# Stage 1: Build estático Next (# output: 'export')
+###############################
 FROM node:20-alpine AS builder
 
-# Crea directorio de trabajo
 WORKDIR /app
 
-# Instala pnpm globalmente
-RUN npm install -g pnpm
+# Dependencias del sistema mínimas (git puede ser necesario para algunos paquetes)
+RUN apk add --no-cache git
 
-# Copia archivos necesarios para instalar dependencias
+# PNPM
+RUN npm install -g pnpm@9
+
+# Capa de dependencias
 COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
-# Instala dependencias
-RUN pnpm install
-
-# Copia el resto del código fuente
+# Código fuente
 COPY . .
 
-# Genera la build de producción
-RUN pnpm run build
+# Build (genera carpeta out/ gracias a output: 'export')
+ENV NODE_ENV=production
+RUN pnpm run build:static && test -d out
 
-# Etapa 2: Imagen final para producción
-FROM node:20-alpine AS runner
+###############################
+# Stage 2: Runtime estático con Nginx
+###############################
+FROM nginx:1.27-alpine AS runtime
 
-# Crea directorio de trabajo
-WORKDIR /app
+WORKDIR /usr/share/nginx/html
 
-# Copia solo los archivos necesarios para producción
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
+# Copiamos export estático
+COPY --from=builder /app/out ./
 
-# Render usará este puerto
+# Configuración de Nginx personalizada (SPA fallback + caché agresivo para assets)
+RUN rm -f /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Puerto (coincidimos con 3000 para compatibilidad con hosting que espera 3000)
 EXPOSE 3000
 
-# Comando de arranque
-CMD ["node_modules/.bin/next", "start"]
+# Healthcheck simple (opcional)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+	CMD wget -qO- http://localhost:3000/ || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

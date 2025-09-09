@@ -3,6 +3,7 @@ import { DM_Mono, Geist } from 'next/font/google'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
+import SWRegister from '@/components/pwa/SWRegister'
 const geistSans = Geist({
   variable: '--font-geist-sans',
   weight: '400',
@@ -28,9 +29,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0d0d0d" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+      </head>
       <body className={`${geistSans.variable} ${dmMono.variable} antialiased`}>
         <NuqsAdapter>{children}</NuqsAdapter>
         <Toaster />
+        <SWRegister />
       </body>
     </html>
   )

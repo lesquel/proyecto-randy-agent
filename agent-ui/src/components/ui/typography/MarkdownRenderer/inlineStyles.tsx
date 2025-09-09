@@ -103,7 +103,7 @@ const DeletedText = ({ className, ...props }: DeletedTextProps) => (
 
 const HorizontalRule = ({ className, ...props }: HorizontalRuleProps) => (
   <hr
-    className={cn(className, 'mx-auto w-48 border-b border-border')}
+    className={cn(className, 'border-border mx-auto w-48 border-b')}
     {...filterProps(props)}
   />
 )
@@ -153,22 +153,31 @@ const Img = ({ src, alt }: ImgProps) => {
 
   if (!src) return null
 
+  // If src is a Blob convert to object URL; otherwise ensure string
+  const normalized =
+    typeof src === 'string'
+      ? src
+      : src instanceof Blob
+        ? URL.createObjectURL(src)
+        : ''
+  if (!normalized) return null
+
   return (
     <div className="w-full max-w-xl">
       {error ? (
-        <div className="flex h-40 flex-col items-center justify-center gap-2 rounded-md bg-secondary/50 text-muted">
+        <div className="bg-secondary/50 text-muted flex h-40 flex-col items-center justify-center gap-2 rounded-md">
           <Paragraph className="text-primary">Image unavailable</Paragraph>
           <Link
-            href={src}
+            href={normalized}
             target="_blank"
             className="max-w-md truncate underline"
           >
-            {src}
+            {normalized}
           </Link>
         </div>
       ) : (
         <Image
-          src={src}
+          src={normalized}
           width={96}
           height={56}
           alt={alt ?? 'Rendered image'}
