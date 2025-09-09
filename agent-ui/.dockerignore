@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+.git
+.gitignore
+Dockerfile
+README.md
+README_MOBILE.md
+.vscode
+**/npm-debug.log
+**/yarn-error.log
+**/.pnpm-store
+capacitor.config.ts
+android

@@ -153,13 +153,8 @@ const Img = ({ src, alt }: ImgProps) => {
 
   if (!src) return null
 
-  // If src is a Blob convert to object URL; otherwise ensure string
-  const normalized =
-    typeof src === 'string'
-      ? src
-      : src instanceof Blob
-        ? URL.createObjectURL(src)
-        : ''
+  // Normalizar (evita instanceof Blob en build SSR)
+  const normalized = typeof src === 'string' ? src : ''
   if (!normalized) return null
 
   return (

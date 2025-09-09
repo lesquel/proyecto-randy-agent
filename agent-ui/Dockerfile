@@ -6,14 +6,15 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Dependencias del sistema mínimas (git puede ser necesario para algunos paquetes)
-RUN apk add --no-cache git
+RUN apk add --no-cache git libc6-compat
 
 # PNPM
 RUN npm install -g pnpm@9
 
 # Capa de dependencias
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+ARG PNPM_INSTALL_FLAGS="--no-frozen-lockfile"
+RUN pnpm install $PNPM_INSTALL_FLAGS
 
 # Código fuente
 COPY . .
@@ -33,14 +34,20 @@ WORKDIR /usr/share/nginx/html
 COPY --from=builder /app/out ./
 
 # Configuración de Nginx personalizada (SPA fallback + caché agresivo para assets)
-RUN rm -f /etc/nginx/conf.d/default.conf
+RUN rm -f /etc/nginx/conf.d/default.conf \
+	&& apk add --no-cache curl \
+	&& addgroup -g 1010 appgrp || true \
+	&& adduser -D -G appgrp -u 1010 appusr || true
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+RUN chown -R appusr:appgrp /usr/share/nginx/html
 
 # Puerto (coincidimos con 3000 para compatibilidad con hosting que espera 3000)
 EXPOSE 3000
 
 # Healthcheck simple (opcional)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-	CMD wget -qO- http://localhost:3000/ || exit 1
+	CMD curl -fsSL http://localhost:3000/ >/dev/null || exit 1
+
+USER appusr
 
 CMD ["nginx", "-g", "daemon off;"]

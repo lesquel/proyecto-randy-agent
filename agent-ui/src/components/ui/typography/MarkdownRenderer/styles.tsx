@@ -175,12 +175,7 @@ const Heading6 = ({ className, ...props }: HeadingProps) => (
 const Img = ({ src, alt }: ImgProps) => {
   const [error, setError] = useState(false)
   if (!src) return null
-  const normalized =
-    typeof src === 'string'
-      ? src
-      : src instanceof Blob
-        ? URL.createObjectURL(src)
-        : ''
+  const normalized = typeof src === 'string' ? src : ''
   if (!normalized) return null
   return (
     <div className="w-full max-w-xl">
