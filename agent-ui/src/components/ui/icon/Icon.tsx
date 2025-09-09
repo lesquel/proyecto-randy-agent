@@ -14,11 +14,18 @@ const Icon: FC<IconProps> = ({
 }) => {
   const IconElement = ICONS[type]
 
+  if (!IconElement) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`[Icon] Tipo de icono desconocido: "${type}"`)
+    }
+    return null
+  }
+
   return (
     <IconElement
       className={cn(
         color && !disabled ? `text-${color}` : 'text-primary',
-        disabled && 'cursor-default text-muted/50',
+        disabled && 'text-muted/50 cursor-default',
         className,
         size === 'xxs' && 'size-3',
         size === 'xs' && 'size-4',

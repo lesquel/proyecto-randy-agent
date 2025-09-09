@@ -17,7 +17,7 @@ const MessageArea = () => {
       className="relative flex flex-1 flex-col overflow-hidden"
     >
       <StickToBottom
-        className="relative mb-4 flex max-h-[calc(100vh-64px)] min-h-0 flex-grow flex-col"
+        className="relative mb-4 flex max-h-[calc(100dvh-140px)] min-h-0 flex-grow flex-col md:max-h-[calc(100vh-64px)]"
         resize="smooth"
         initial="smooth"
       >
@@ -32,7 +32,7 @@ const MessageArea = () => {
         <ScrollToBottom />
 
         {/* Gradient fade at bottom */}
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background/80 to-transparent" />
+  <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background/80 to-transparent" />
       </StickToBottom>
     </motion.div>
   )

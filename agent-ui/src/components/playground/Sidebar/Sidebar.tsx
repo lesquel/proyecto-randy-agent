@@ -19,12 +19,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 import NewChatButton from './NewChatButton'
 import IconLogo from '../../../assets/bot.png'
 
-const ENDPOINT_PLACEHOLDER = "https://proyecto-randy-agent.onrender.com"
+const ENDPOINT_PLACEHOLDER = 'https://proyecto-randy-agent.onrender.com'
 
 const SidebarHeader = () => (
   <div className="flex items-center gap-3 p-1">
-    <div className="from-primary to-primary/80 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br shadow-sm p-[0.1em]">
-      <img src={IconLogo.src} alt="icon" className="w-full color-black" />
+    <div className="from-primary to-primary/80 flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br p-[0.1em] shadow-sm">
+      <img src={IconLogo.src} alt="icon" className="color-black w-full" />
     </div>
     <div className="flex flex-col">
       <span className="text-foreground text-sm font-semibold">Chat AI+</span>
@@ -206,7 +206,12 @@ const Endpoint = () => {
   )
 }
 
-const Sidebar = () => {
+interface SidebarProps {
+  mobileOpen?: boolean
+  onClose?: () => void
+}
+
+const Sidebar = ({ mobileOpen = false, onClose }: SidebarProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const { clearChat, focusChatInput, initializePlayground } = useChatActions()
   const {
@@ -233,10 +238,9 @@ const Sidebar = () => {
 
   return (
     <motion.aside
-      className="border-border/50 bg-card/30 font-dmmono relative flex h-screen shrink-0 grow-0 flex-col overflow-hidden border-r px-4 py-4 shadow-xl backdrop-blur-xl"
-      initial={{ width: '18rem' }}
-      animate={{ width: isCollapsed ? '4rem' : '18rem' }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      className={`border-border/50 bg-card/70 font-dmmono fixed left-0 top-0 z-40 flex h-dvh flex-col overflow-hidden border-r px-4 py-4 shadow-xl backdrop-blur-xl transition-transform duration-300 md:static md:z-auto md:h-screen ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${isCollapsed ? 'md:w-16' : 'md:w-72'}`}
+      initial={false}
+      animate={{}}
     >
       <motion.button
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -252,6 +256,17 @@ const Sidebar = () => {
           className={`transform transition-transform duration-200 ${isCollapsed ? 'rotate-180' : 'rotate-0'}`}
         />
       </motion.button>
+
+      {/* Close button mobile */}
+      <div className="absolute left-3 top-3 z-10 md:hidden">
+        <button
+          onClick={onClose}
+          aria-label="Cerrar"
+          className="bg-background/80 hover:bg-background flex h-8 w-8 items-center justify-center rounded-lg shadow-sm backdrop-blur-sm transition-all"
+        >
+          <Icon type="x" size="xs" />
+        </button>
+      </div>
 
       <motion.div
         className="flex w-full flex-col space-y-6"
